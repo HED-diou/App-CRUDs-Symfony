@@ -1,0 +1,225 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Articles{% endblock %}
+
+
+{# dump(Auth::user()) #}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .tab{ padding: 100px; }
+    .tab2{
+  padding-left: 200px;
+  position: relative;
+}
+.typeUser{
+  color: red;
+}
+</style>
+
+    <div class="tab"><div class="tab2">
+    <div><h2>{{app.user.email}}</h2><h3 class="typeUser">{{app.user.type}}</h3></div>
+    {% if app.user.type == "vendeur" %}
+        <a type="button" class="btn btn btn-outline-secondary" href="{{ path("mesarticles") }}">mes articles</a> <br>  
+    {% endif %}
+    <a href="{{path("send")}}" class="btn btn btn-outline-secondary">Envoyer un message</a>
+    <a type="button" class="btn btn-outline-secondary" href="/article/new">Ajouter un article</a>
+    </div><h1 >&darr; Liste des Articles &darr;</h1>
+    
+<table class="blue">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Titre</th>
+      <th scope="col">Article de</th>
+      <th scope="col">Prix</th>
+      <th scope="col">Image</th>
+      <th scope="col">Publié le</th>
+      {#{% if app.user.type == "client" %}#}
+      <th scope="col">info</th>
+      {#{% endif %}#}
+      {% if app.user.type == "vendeur" %}
+      <th scope="col">Action</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for article in articles %}
+    {% if app.user.type == "vendeur" %}
+      {% if app.user.id == article.getUsers().id %}
+          <tr>
+            <th scope="row"> {{ article.id }} </th>
+            <td>
+              {{ article.titre }} 
+            </td>
+            <td> 
+              {{ article.getUsers().email }} 
+            </td>
+            <td>
+            {{ article.prix }} 
+            </td>
+            {# <td> <img src="img/{{ article.images_product }}" alt="image du produit {{ article.titre }}" class="img-thumbnail">  </td>#}
+            <td>
+              <img class="card" style="width: 10rem;" src="{{ asset('/img/'~article.getImagesProduct) }}"/>
+            </td> 
+            <td>
+              {{ article.getCreatedAt|date }} 
+            </td>
+            <td>
+              {#{% if app.user.type == "client" %}#}
+                <a type="button" class="btn btn-info" href="/article/{{ article.slug }}">Voir mon article</a>
+            </td> 
+            <td>
+              {#{% endif %}#}
+              {% if app.user.type == "vendeur" %}
+                <a type="button" class="btn btn-outline-secondary" href="/article/modifier/{{ article.id }}">Modifier</a>
+                <a type="button" class="btn btn-outline-secondary" href="/deletearticle/{{ article.id }}">Suprimer</a>
+              {% endif %}
+            </td>
+          </tr> 
+          {% endif %}
+        {% endif %}
+        
+
+    {% endfor %}
+  </tbody>
+</table>
+<br><br>
+</div>
+
+<div class="position-absolute top-100 start-50 translate-middle">
+<nav><ul>
+{{ knp_pagination_render(articles) }}</ul>
+</nav>
+<br>        hello
+
+© 2010–2021 | Hamza Ed-diouri
+</div>
+
+<script
+  src="https://code.jquery.com/jquery-3.6.0.slim.js"
+  integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY="
+  crossorigin="anonymous"></script>
+<script>
+;(function($) {
+   $.fn.fixMe = function() {
+      return this.each(function() {
+         var $this = $(this),
+            $t_fixed;
+         function init() {
+            $this.wrap('<div class="container" />');
+            $t_fixed = $this.clone();
+            $t_fixed.find("tbody").remove().end().addClass("fixed").insertBefore($this);
+            resizeFixed();
+         }
+         function resizeFixed() {
+            $t_fixed.find("th").each(function(index) {
+               $(this).css("width",$this.find("th").eq(index).outerWidth()+"px");
+            });
+         }
+         function scrollFixed() {
+            var offset = $(this).scrollTop(),
+            tableOffsetTop = $this.offset().top,
+            tableOffsetBottom = tableOffsetTop + $this.height() - $this.find("thead").height();
+            if(offset < tableOffsetTop || offset > tableOffsetBottom)
+               $t_fixed.hide();
+            else if(offset >= tableOffsetTop && offset <= tableOffsetBottom && $t_fixed.is(":hidden"))
+               $t_fixed.show();
+         }
+         $(window).resize(resizeFixed);
+         $(window).scroll(scrollFixed);
+         init();
+      });
+   };
+})(jQuery);
+
+$(document).ready(function(){
+   $("table").fixMe();
+   $(".up").click(function() {
+      $('html, body').animate({
+      scrollTop: 0
+   }, 2000);
+ });
+});
+</script>
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .tab{ padding: 100px; }
+
+    body{
+  font:1.2em normal Arial,sans-serif;
+  color:#34495E;
+}
+
+h1{
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:-2px;
+  font-size:2.5em;
+  margin:20px 0;
+}
+
+.container{
+  width:90%;
+  margin:auto;
+}
+
+table{
+  border-collapse:collapse;
+  width:100%;
+}
+
+.blue{
+  border:2px solid #1ABC9C;
+}
+
+.blue thead{
+  background:#1ABC9C;
+}
+
+.purple{
+  border:2px solid #9B59B6;
+}
+
+.purple thead{
+  background:#9B59B6;
+}
+
+thead{
+  color:white;
+}
+
+th,td{
+  text-align:center;
+  padding:5px 0;
+}
+
+tbody tr:nth-child(even){
+  background:#ECF0F1;
+}
+
+tbody tr:hover{
+background:#BDC3C7;
+  color:#FFFFFF;
+}
+
+.fixed{
+  top:0;
+  position:fixed;
+  width:auto;
+  display:none;
+  border:none;
+}
+
+.scrollMore{
+  margin-top:600px;
+}
+
+.up{
+  cursor:pointer;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{article.titre}} {% endblock %}
+
+{% block body %}
+<style>
+    .article{ padding: 100px; }
+</style>
+
+<div class="article">
+<h1> {{article.titre}} </h1>
+
+<p>Publié le {{article.createdAt|date('d/m/y à h\\hi')}} </p>
+
+<div>
+{{article.contenu|raw}}
+<img class="card" style="width: 10rem;" src="{{ asset('/img/'~article.getImagesProduct) }}"/>
+<h4>Article publier par {{article.getUsers().email}}<h4>
+</div><br><br>
+<a href="{{path("send")}}" class="btn btn-primary">Contacter le vendeur</a><br><br><br><br><br><br>
+<h2>Commentaires Publique</h2>
+
+{% for commentaire in article.commentaires %}
+    <p>publié par {{commentaire.pseudo}}<p>
+    <div> {{commentaire.pseudo}}</div>
+    {% else %}
+        <p>Il n'y a pas encore de commentaire</p>
+{% endfor %}
+
+</div>
+{% endblock %}
